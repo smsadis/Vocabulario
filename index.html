@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Vocabulario</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Vocabulario" />
+  <meta name="theme-color" content="#f2f2f7" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%23f2f2f7'/%3E%3Ctext x='90' y='118' font-size='82' text-anchor='middle' fill='%230a84ff' font-family='-apple-system,sans-serif' font-weight='700'%3EV%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f2f2f7'/%3E%3Ctext x='16' y='23' font-size='18' text-anchor='middle' fill='%230066cc' font-family='-apple-system,sans-serif' font-weight='700'%3EV%3C/text%3E%3C/svg%3E" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --bg: #f2f2f7;
+      --bg2: #ffffff;
+      --bg3: #e5e5ea;
+      --blue: #0066cc;
+      --blue-light: #0a84ff;
+      --text: #000000;
+      --text2: #1c1c1e;
+      --text3: #6d6d72;
+      --text4: #aeaeb2;
+      --green: #34c759;
+      --orange: #ff9500;
+      --red: #ff3b30;
+      --sep: rgba(0,0,0,0.1);
+      --radius: 16px;
+      --font: -apple-system, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      /* Card-specific */
+      --card-top-bg: #0066cc;
+      --card-top-text: #ffffff;
+      --card-top-label: rgba(255,255,255,0.7);
+      --card-bot-bg: #ffffff;
+      --card-bot-text: #000000;
+      --card-bot-label: #0066cc;
+    }
+
+    html, body { height: 100%; background: var(--bg); overscroll-behavior: none; }
+    body { font-family: var(--font); color: var(--text); }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; color: inherit; }
+    input { font-family: var(--font); }
+    * { -webkit-font-smoothing: antialiased; }
+
+    /* ── Layout ── */
+    #root { display: flex; flex-direction: column; min-height: 100dvh; padding: env(safe-area-inset-top,20px) 0 env(safe-area-inset-bottom,0) 0; }
+
+    /* ── Top Nav ── */
+    .topnav { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px 8px; background: var(--bg); }
+    .topnav-title { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; color: var(--text); }
+    .topnav-right { display: flex; gap: 10px; align-items: center; }
+    .icon-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--bg2); display: flex; align-items: center; justify-content: center; font-size: 16px; transition: background 0.15s; }
+    .icon-btn:active { background: var(--bg3); }
+
+    /* ── Tab Bar ── */
+    .tabbar { display: flex; background: var(--bg2); border-top: 1px solid var(--sep); padding: 6px 0 calc(6px + env(safe-area-inset-bottom,0px)); position: sticky; bottom: 0; z-index: 50; }
+    .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 4px; font-size: 10px; color: var(--text4); font-weight: 500; letter-spacing: 0.2px; transition: color 0.15s; }
+    .tab.active { color: var(--blue); }
+    .tab-icon { font-size: 22px; line-height: 1; }
+
+    /* ── Content scroll ── */
+    .page { flex: 1; overflow-y: auto; padding: 0 16px 16px; }
+
+    /* ── Translate-style card layout (horizontal split) ── */
+    .translate-card { border-radius: var(--radius); overflow: hidden; margin-top: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.10); }
+    .translate-half { padding: 20px; min-height: 160px; display: flex; flex-direction: column; position: relative; }
+    .translate-half.top { background: var(--card-top-bg); border-bottom: 1px solid rgba(255,255,255,0.15); }
+    .translate-half.bottom { background: var(--card-bot-bg); }
+    .half-lang { font-size: 13px; font-weight: 600; margin-bottom: 10px; letter-spacing: 0.2px; }
+    .translate-half.top .half-lang { color: var(--card-top-label); }
+    .translate-half.bottom .half-lang { color: var(--card-bot-label); }
+    .half-word { font-size: 34px; font-weight: 600; letter-spacing: -0.5px; line-height: 1.15; flex: 1; display: flex; align-items: center; }
+    .translate-half.top .half-word { color: var(--card-top-text); }
+    .translate-half.bottom .half-word { color: var(--card-bot-text); }
+    .hidden-placeholder { height: 36px; background: rgba(0,0,0,0.08); border-radius: 8px; width: 70%; opacity: 0.6; }
+    .reveal-btn { position: absolute; bottom: 16px; right: 16px; background: var(--blue); color: #fff; border-radius: 20px; padding: 8px 18px; font-size: 15px; font-weight: 600; letter-spacing: -0.2px; transition: opacity 0.15s; }
+    .reveal-btn:active { opacity: 0.75; }
+
+    /* ── Card action row ── */
+    .card-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding: 0 2px; }
+    .action-group { display: flex; gap: 10px; }
+    .action-pill { display: flex; align-items: center; gap: 6px; background: var(--bg2); border-radius: 20px; padding: 9px 16px; font-size: 14px; font-weight: 600; transition: background 0.15s, color 0.15s; color: var(--text3); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .action-pill:active { background: var(--bg3); }
+    .action-pill.mastered { background: rgba(52,199,89,0.15); color: var(--green); }
+    .action-pill.mastered-off { color: var(--text3); }
+
+    /* ── Nav arrows ── */
+    .nav-row { display: flex; align-items: center; justify-content: center; gap: 28px; margin-top: 14px; }
+    .nav-arrow { width: 52px; height: 52px; border-radius: 50%; background: var(--bg2); font-size: 22px; display: flex; align-items: center; justify-content: center; color: var(--blue); transition: background 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .nav-arrow:active { background: var(--bg3); }
+    .nav-arrow:disabled { color: var(--text4); }
+    .counter { font-size: 15px; color: var(--text3); min-width: 70px; text-align: center; font-weight: 500; }
+
+    /* ── Lang toggle ── */
+    .lang-toggle { display: flex; background: var(--bg3); border-radius: 10px; padding: 3px; }
+    .lang-opt { flex: 1; text-align: center; padding: 8px; border-radius: 8px; font-size: 14px; font-weight: 600; color: var(--text3); transition: all 0.2s; }
+    .lang-opt.active { background: var(--blue); color: #fff; }
+
+    /* ── Section header ── */
+    .section-header { font-size: 13px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; margin: 20px 0 8px; }
+
+    /* ── List rows ── */
+    .list-group { background: #ffffff; border-radius: var(--radius); overflow: hidden; }
+    .list-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--sep); }
+    .list-row:last-child { border-bottom: none; }
+    .row-num { font-size: 13px; color: var(--text4); min-width: 20px; }
+    .row-words { flex: 1; }
+    .row-es { font-size: 17px; font-weight: 500; }
+    .row-en { font-size: 14px; color: var(--text3); margin-top: 2px; }
+    .row-badge { background: rgba(48,209,88,0.18); color: var(--green); font-size: 11px; font-weight: 700; letter-spacing: 0.3px; padding: 3px 8px; border-radius: 10px; }
+    .row-actions { display: flex; gap: 8px; }
+    .row-btn { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--bg3); transition: background 0.15s; }
+    .row-btn:active { background: var(--bg); }
+    .row-btn.danger { color: var(--red); }
+    .row-btn.edit { color: var(--blue-light); }
+
+    /* ── Edit inline ── */
+    .edit-inline { padding: 10px 16px; border-bottom: 1px solid var(--sep); display: flex; flex-direction: column; gap: 8px; }
+    .edit-inline input { background: var(--bg); border: none; border-radius: 10px; color: var(--text); padding: 10px 14px; font-size: 16px; outline: none; width: 100%; }
+    .edit-inline input::placeholder { color: var(--text4); }
+    .edit-actions { display: flex; gap: 8px; }
+    .edit-save { background: var(--blue); color: #fff; border-radius: 10px; padding: 9px 18px; font-size: 14px; font-weight: 600; }
+    .edit-cancel { background: var(--bg3); color: var(--text2); border-radius: 10px; padding: 9px 18px; font-size: 14px; font-weight: 600; }
+
+    /* ── Add form ── */
+    .add-group { background: #ffffff; border-radius: var(--radius); overflow: hidden; }
+    .add-field { display: flex; align-items: center; border-bottom: 1px solid var(--sep); padding: 0 16px; }
+    .add-field:last-child { border-bottom: none; }
+    .add-label { font-size: 13px; font-weight: 600; color: var(--blue); min-width: 72px; }
+    .add-input { flex: 1; background: none; border: none; color: var(--text); padding: 16px 0; font-size: 17px; outline: none; }
+    .add-input::placeholder { color: var(--text4); }
+    .add-btn { width: 100%; background: var(--blue); color: #fff; border-radius: var(--radius); padding: 16px; font-size: 17px; font-weight: 600; margin-top: 14px; transition: opacity 0.15s; letter-spacing: -0.2px; }
+    .add-btn:disabled { opacity: 0.35; }
+
+    /* ── Quiz ── */
+    .quiz-question { background: #ffffff; border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-top: 8px; }
+    .quiz-prompt-label { font-size: 13px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
+    .quiz-prompt-word { font-size: 38px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.15; }
+    .quiz-choices { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+    .quiz-choice { background: #ffffff; border-radius: var(--radius); padding: 17px 20px; font-size: 18px; font-weight: 500; text-align: left; border: 2px solid transparent; transition: all 0.15s; }
+    .quiz-choice:active { background: var(--bg3); }
+    .quiz-choice.correct { background: rgba(48,209,88,0.15); border-color: var(--green); color: var(--green); }
+    .quiz-choice.wrong { background: rgba(255,69,58,0.12); border-color: var(--red); color: var(--red); }
+    .quiz-choice.reveal-correct { background: rgba(48,209,88,0.10); border-color: var(--green); color: var(--green); }
+    .quiz-choice:disabled { cursor: default; }
+
+    /* ── Score bar ── */
+    .score-bar { display: flex; gap: 10px; background: #ffffff; border-radius: var(--radius); padding: 14px 18px; margin-top: 8px; }
+    .score-item { flex: 1; text-align: center; }
+    .score-num { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+    .score-num.correct { color: var(--green); }
+    .score-num.wrong { color: var(--red); }
+    .score-num.pct { color: var(--blue); }
+    .score-label { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .score-divider { width: 1px; background: var(--sep); }
+
+    .quiz-next { width: 100%; background: var(--blue); color: #fff; border-radius: var(--radius); padding: 16px; font-size: 17px; font-weight: 600; margin-top: 12px; letter-spacing: -0.2px; }
+    .quiz-next:active { opacity: 0.8; }
+    .quiz-done { background: #ffffff; border-radius: var(--radius); padding: 32px 20px; text-align: center; margin-top: 8px; }
+    .quiz-done-emoji { font-size: 56px; margin-bottom: 12px; }
+    .quiz-done-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .quiz-done-sub { font-size: 16px; color: var(--text3); margin-bottom: 24px; }
+    .quiz-restart { background: var(--blue); color: #fff; border-radius: var(--radius); padding: 16px 32px; font-size: 17px; font-weight: 600; }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text3); }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-size: 20px; font-weight: 600; color: var(--text2); margin-bottom: 8px; }
+    .empty-sub { font-size: 15px; line-height: 1.5; }
+
+    /* ── Category filter pills ── */
+    .cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 4px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+    .cat-pill { flex-shrink: 0; border: 1.5px solid var(--text4); border-radius: 16px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--text3); background: transparent; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .cat-pill.cat-active { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+    /* ── Speak Quiz ── */
+    .mic-btn { width: 100%; background: var(--bg2); border-radius: var(--radius); padding: 28px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 17px; font-weight: 600; color: var(--blue); border: 2px solid var(--blue); box-shadow: 0 2px 12px rgba(0,102,204,0.10); transition: background 0.15s; position: relative; overflow: hidden; }
+    .mic-btn:active { background: rgba(0,102,204,0.06); }
+    .mic-listening { color: var(--red); border-color: var(--red); background: rgba(255,59,48,0.04); animation: mic-border 1.2s ease-in-out infinite; }
+    @keyframes mic-border { 0%,100%{box-shadow:0 0 0 0 rgba(255,59,48,0.3)} 50%{box-shadow:0 0 0 8px rgba(255,59,48,0)} }
+    .mic-pulse { position: absolute; inset: 0; background: radial-gradient(circle, rgba(255,59,48,0.08) 0%, transparent 70%); animation: pulse 1.2s ease-in-out infinite; pointer-events: none; }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+    .speak-result { display: flex; gap: 14px; align-items: flex-start; background: var(--bg2); border-radius: var(--radius); padding: 18px; border: 2px solid transparent; }
+    .speak-correct { border-color: var(--green); background: rgba(52,199,89,0.06); }
+    .speak-wrong   { border-color: var(--red);   background: rgba(255,59,48,0.06); }
+    .speak-result-icon { font-size: 26px; font-weight: 700; flex-shrink: 0; line-height: 1.2; }
+    .speak-correct .speak-result-icon { color: var(--green); }
+    .speak-wrong   .speak-result-icon { color: var(--red); }
+    .speak-result-label { font-size: 12px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .speak-result-heard { font-size: 20px; font-weight: 600; color: var(--text); }
+    .speak-result-answer { font-size: 15px; color: var(--text3); margin-top: 6px; }
+    .mic-retry { background: var(--bg3); color: var(--text2); border-radius: var(--radius); padding: 14px 18px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; }
+
+    /* ── Auto-translate ── */
+    .translate-spinner { display: inline-block; font-size: 13px; color: var(--blue); animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Export/Import ── */
+    .backup-group { background: #ffffff; border-radius: var(--radius); overflow: hidden; margin-top: 0; }
+    .backup-row { display: flex; align-items: center; gap: 14px; padding: 16px; border-bottom: 1px solid var(--sep); }
+    .backup-row:last-child { border-bottom: none; }
+    .backup-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .backup-icon.export { background: rgba(10,132,255,0.18); }
+    .backup-icon.import { background: rgba(48,209,88,0.18); }
+    .backup-info { flex: 1; }
+    .backup-title { font-size: 16px; font-weight: 600; }
+    .backup-sub { font-size: 13px; color: var(--text3); margin-top: 2px; }
+    .backup-btn { background: var(--bg3); color: var(--blue); border-radius: 10px; padding: 8px 14px; font-size: 14px; font-weight: 600; flex-shrink: 0; transition: background 0.15s; }
+    .backup-btn:active { background: var(--sep); }
+    .toast { position: fixed; top: calc(env(safe-area-inset-top,20px) + 60px); left: 50%; transform: translateX(-50%); background: var(--bg3); color: var(--text); border-radius: 20px; padding: 10px 20px; font-size: 14px; font-weight: 600; z-index: 200; white-space: nowrap; animation: fadeInOut 2.5s ease forwards; pointer-events: none; }
+    @keyframes fadeInOut { 0%{opacity:0;transform:translateX(-50%) translateY(-8px)} 15%{opacity:1;transform:translateX(-50%) translateY(0)} 75%{opacity:1} 100%{opacity:0} }
+
+    /* ── Install Banner ── */
+    .install-banner { position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--bg2); border: 1px solid var(--blue); border-radius: 16px; padding: 14px 16px; max-width: 340px; width: calc(100% - 32px); display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 100; animation: slideUp 0.4s ease; }
+    @keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(16px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+    .banner-text { flex: 1; font-size: 14px; line-height: 1.5; color: var(--text2); }
+    .banner-text strong { color: var(--text); }
+    .banner-close { color: var(--text3); font-size: 18px; line-height: 1; padding: 0 2px; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.24.7/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+const STORAGE_KEY = "vocabulario-v3";
+const QUIZ_SIZE = 25;
+
+// ── Sound effects via Web Audio API ──
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const master = ctx.createGain();
+    master.gain.value = 0.25;
+    master.connect(ctx.destination);
+
+    if (type === "correct") {
+      // Two rising tones — pleasant chime
+      [[523.25, 0, 0.12], [783.99, 0.1, 0.18]].forEach(([freq, start, dur]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, ctx.currentTime + start);
+        gain.gain.linearRampToValueAtTime(0.8, ctx.currentTime + start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur);
+        osc.connect(gain); gain.connect(master);
+        osc.start(ctx.currentTime + start);
+        osc.stop(ctx.currentTime + start + dur + 0.05);
+      });
+    } else {
+      // Low dull thud — subtle wrong buzz
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.18);
+      gain.gain.setValueAtTime(0.7, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+      osc.connect(gain); gain.connect(master);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.25);
+    }
+    setTimeout(() => ctx.close(), 600);
+  } catch(e) {}
+}
+
+const DEFAULT_CARDS = [
+  { id:1, spanish:"el gato",   english:"the cat" },
+  { id:2, spanish:"la casa",   english:"the house" },
+  { id:3, spanish:"hablar",    english:"to speak" },
+  { id:4, spanish:"hermoso",   english:"beautiful" },
+  { id:5, spanish:"el tiempo", english:"time / weather" },
+];
+
+// ── Shuffle ──
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// ── Storage ──
+function load() {
+  try {
+    const r = localStorage.getItem(STORAGE_KEY);
+    if (r) {
+      const s = JSON.parse(r);
+      return { ...s, cards: shuffle(s.cards || []) };
+    }
+    // migrate from v2
+    const old = localStorage.getItem("vocabulario-v2");
+    if (old) {
+      const s = JSON.parse(old);
+      return { cards: shuffle(s.cards||[]), categories: [], quiz: s.quiz||{correct:0,wrong:0} };
+    }
+  } catch {}
+  return { cards: shuffle(DEFAULT_CARDS), categories: [], quiz: {correct:0,wrong:0} };
+}
+function save(state) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+
+// ── Category chip colors ──
+const CAT_COLORS = ["#0066cc","#34c759","#ff9500","#ff3b30","#af52de","#00c7be","#ff6b6b","#5856d6"];
+function catColor(idx) { return CAT_COLORS[idx % CAT_COLORS.length]; }
+
+// ════════════════════════════════════════
+// STUDY TAB
+// ════════════════════════════════════════
+function StudyTab({ cards, categories, onToggleMastered, studyLang }) {
+  const [filterCat, setFilterCat] = useState("all");
+  const [idx, setIdx] = useState(0);
+  const [revealed, setRevealed] = useState(false);
+  const touchX = useRef(null);
+
+  const pool = filterCat === "all"
+    ? cards.filter(c => !c.mastered)
+    : cards.filter(c => !c.mastered && (c.categories||[]).includes(filterCat));
+
+  const safeIdx = pool.length ? Math.min(idx, pool.length-1) : 0;
+  const card = pool[safeIdx];
+
+  useEffect(() => { setRevealed(false); }, [safeIdx, studyLang, filterCat]);
+  useEffect(() => { if (idx >= pool.length && pool.length > 0) setIdx(pool.length-1); }, [pool.length]);
+
+  const prev = () => setIdx(i => (i-1+pool.length)%pool.length);
+  const next = () => setIdx(i => (i+1)%pool.length);
+
+  const handleTouchStart = e => { touchX.current = e.touches[0].clientX; };
+  const handleTouchEnd = e => {
+    if (touchX.current === null) return;
+    const d = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(d) > 50) { d < 0 ? next() : prev(); }
+    touchX.current = null;
+  };
+
+  const front = card ? (studyLang==="es" ? card.spanish : card.english) : "";
+  const back  = card ? (studyLang==="es" ? card.english  : card.spanish) : "";
+  const frontLang = studyLang==="es" ? "Spanish" : "English";
+  const backLang  = studyLang==="es" ? "English" : "Spanish";
+
+  return (
+    <div className="page" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      {/* Category filter pills */}
+      {categories.length > 0 && (
+        <div className="cat-scroll">
+          <button className={`cat-pill${filterCat==="all"?" cat-active":""}`} onClick={()=>{setFilterCat("all");setIdx(0);}}>All</button>
+          {categories.map((cat,i) => (
+            <button key={cat.id} className={`cat-pill${filterCat===cat.id?" cat-active":""}`}
+              style={filterCat===cat.id?{background:catColor(i),color:"#fff",borderColor:catColor(i)}:{borderColor:catColor(i),color:catColor(i)}}
+              onClick={()=>{setFilterCat(cat.id);setIdx(0);}}>
+              {cat.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {!pool.length ? (
+        <div className="empty-state">
+          <div className="empty-icon">{filterCat!=="all"?"🗂":"🎓"}</div>
+          <div className="empty-title">{filterCat!=="all"?"No cards in this category":"All Mastered!"}</div>
+          <div className="empty-sub">{filterCat!=="all"?"Add words to this category from the Cards tab.":"Add more cards or un-master some from Cards."}</div>
+        </div>
+      ) : (
+        <>
+          <div className="translate-card">
+            <div className="translate-half top">
+              <div className="half-lang">{frontLang}</div>
+              <div className="half-word">{front}</div>
+              {/* Category chips on card */}
+              {card && (card.categories||[]).length > 0 && (
+                <div style={{display:"flex",gap:4,flexWrap:"wrap",marginTop:8}}>
+                  {(card.categories||[]).map(cid => {
+                    const cat = categories.find(c=>c.id===cid);
+                    const ci  = categories.findIndex(c=>c.id===cid);
+                    return cat ? <span key={cid} style={{background:"rgba(255,255,255,0.2)",color:"#fff",borderRadius:10,padding:"2px 8px",fontSize:11,fontWeight:600}}>{cat.name}</span> : null;
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="translate-half bottom" style={{minHeight:150}}>
+              <div className="half-lang">{backLang}</div>
+              {revealed
+                ? <div className="half-word" style={{flex:1,display:"flex",alignItems:"center"}}>{back}</div>
+                : <div style={{flex:1,display:"flex",alignItems:"center"}}><div className="hidden-placeholder"></div></div>
+              }
+              {!revealed && <button className="reveal-btn" onClick={()=>setRevealed(true)}>Reveal</button>}
+            </div>
+          </div>
+          <div className="card-actions">
+            <button className={`action-pill ${card.mastered?"mastered":"mastered-off"}`} onClick={()=>onToggleMastered(card.id)}>
+              <span>{card.mastered?"✓":"○"}</span><span>Mastered</span>
+            </button>
+            <div className="nav-row" style={{margin:0}}>
+              <button className="nav-arrow" onClick={prev}>←</button>
+              <span className="counter">{safeIdx+1} / {pool.length}</span>
+              <button className="nav-arrow" onClick={next}>→</button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// SPEECH QUIZ QUESTION
+// ════════════════════════════════════════
+function SpeakQuestion({ question, studyLang, onResult, onNext, isLast }) {
+  const [status, setStatus]   = useState("idle"); // idle | listening | result
+  const [heard, setHeard]     = useState("");
+  const [correct, setCorrect] = useState(null);
+  const recogRef = useRef(null);
+
+  const correctAnswer = studyLang==="es" ? question.card.english : question.card.spanish;
+  const prompt        = studyLang==="es" ? question.card.spanish  : question.card.english;
+  const answerLang    = studyLang==="es" ? "en-US" : "es-ES";
+
+  // fuzzy match — strip articles, accents, punctuation, lowercase
+  function normalize(s) {
+    return s.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+      .replace(/^(the|a|an|el|la|los|las|un|una)\s+/,"")
+      .replace(/[^a-z0-9\s]/g,"").trim();
+  }
+  function isMatch(spoken, target) {
+    const s = normalize(spoken), t = normalize(target);
+    if (s === t) return true;
+    // allow if one contains the other (handles "to speak" vs "speak")
+    if (s.includes(t) || t.includes(s)) return true;
+    // simple edit-distance tolerance for short words
+    if (Math.abs(s.length-t.length) <= 2) {
+      let diff = 0;
+      const [sh,lo] = s.length<=t.length?[s,t]:[t,s];
+      for (let i=0;i<sh.length;i++) if (sh[i]!==lo[i]) diff++;
+      diff += lo.length - sh.length;
+      if (diff <= 2) return true;
+    }
+    return false;
+  }
+
+  const startListening = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert("Speech recognition isn't supported in this browser. Try Safari on iOS 15+."); return; }
+    const r = new SR();
+    r.lang = answerLang;
+    r.interimResults = false;
+    r.maxAlternatives = 5;
+    r.continuous = false;
+    recogRef.current = r;
+    setStatus("listening"); setHeard(""); setCorrect(null);
+
+    let resultFired = false;
+
+    r.onresult = e => {
+      resultFired = true;
+      const results = Array.from(e.results[0]).map(a => a.transcript);
+      const ok = results.some(t => isMatch(t, correctAnswer));
+      const best = results[0];
+      setHeard(best); setCorrect(ok); setStatus("result");
+      onResult(ok);
+    };
+
+    r.onerror = e => {
+      if (e.error === "no-speech") {
+        setHeard("(nothing heard)"); setCorrect(false); setStatus("result"); onResult(false);
+      } else if (e.error !== "aborted") {
+        setStatus("idle");
+        alert("Mic error: " + e.error);
+      }
+    };
+
+    r.onend = () => {
+      // Safari sometimes fires onend before onresult — wait a tick to see if result arrives
+      setTimeout(() => {
+        if (!resultFired) {
+          setHeard("(nothing heard — try again)");
+          setCorrect(false);
+          setStatus("result");
+          onResult(false);
+        }
+      }, 300);
+    };
+
+    r.start();
+  };
+
+  const stop = () => { recogRef.current?.abort(); setStatus("idle"); };
+
+  useEffect(()=>()=>recogRef.current?.abort(),[]);
+
+  return (
+    <div>
+      <div className="quiz-question" style={{marginBottom:14}}>
+        <div className="quiz-prompt-label">{studyLang==="es"?"Spanish → speak English":"English → speak Spanish"}</div>
+        <div className="quiz-prompt-word">{prompt}</div>
+      </div>
+
+      {status==="idle" && (
+        <button className="mic-btn" onClick={startListening}>
+          <span style={{fontSize:32}}>🎤</span>
+          <span>Tap to Speak</span>
+        </button>
+      )}
+
+      {status==="listening" && (
+        <button className="mic-btn mic-listening" onClick={stop}>
+          <span style={{fontSize:32}}>⏹</span>
+          <span>Listening… tap to stop</span>
+          <div className="mic-pulse"/>
+        </button>
+      )}
+
+      {status==="result" && (
+        <div>
+          <div className={`speak-result ${correct?"speak-correct":"speak-wrong"}`}>
+            <div className="speak-result-icon">{correct?"✓":"✗"}</div>
+            <div>
+              <div className="speak-result-label">You said</div>
+              <div className="speak-result-heard">"{heard}"</div>
+              {!correct && <div className="speak-result-answer">Answer: <strong>{correctAnswer}</strong></div>}
+            </div>
+          </div>
+          <div style={{display:"flex",gap:10,marginTop:12}}>
+            <button className="mic-retry" onClick={()=>{setStatus("idle");setHeard("");setCorrect(null);}}>↩ Retry</button>
+            <button className="quiz-next" style={{flex:1,marginTop:0}} onClick={onNext}>{isLast?"See Results →":"Next →"}</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// QUIZ TAB
+// ════════════════════════════════════════
+function QuizTab({ cards, categories, quizStats, onQuizResult, studyLang }) {
+  const [filterCat, setFilterCat] = useState("all");
+  const [quizMode, setQuizMode]   = useState("mc"); // "mc" | "speak"
+  const [questions, setQuestions] = useState(null);
+  const [qIdx, setQIdx]     = useState(0);
+  const [chosen, setChosen] = useState(null);
+  const [done, setDone]     = useState(false);
+  const [sCorrect, setSCorrect] = useState(0);
+  const [sWrong, setSWrong]     = useState(0);
+
+  const pool = filterCat==="all"
+    ? cards.filter(c=>!c.mastered)
+    : cards.filter(c=>!c.mastered && (c.categories||[]).includes(filterCat));
+
+  const buildQuestions = useCallback((sourcePool) => {
+    if (!sourcePool || sourcePool.length < 2) return null;
+    const selected = shuffle(sourcePool).slice(0, QUIZ_SIZE);
+    const allActive = cards.filter(c=>!c.mastered);
+    return selected.map(card => {
+      const wrongPool = allActive.filter(c=>c.id!==card.id);
+      const wrong = shuffle(wrongPool).slice(0,3);
+      return { card, choices: shuffle([card,...wrong]) };
+    });
+  }, [cards]);
+
+  const start = useCallback((p) => {
+    setQuestions(buildQuestions(p));
+    setQIdx(0); setChosen(null); setDone(false); setSCorrect(0); setSWrong(0);
+  }, [buildQuestions]);
+
+  useEffect(() => { start(pool); }, [filterCat, quizMode]);
+
+  const catPills = (
+    <div className="cat-scroll" style={{marginBottom:2}}>
+      <button className={`cat-pill${filterCat==="all"?" cat-active":""}`} onClick={()=>setFilterCat("all")}>All</button>
+      {categories.map((cat,i)=>(
+        <button key={cat.id} className={`cat-pill${filterCat===cat.id?" cat-active":""}`}
+          style={filterCat===cat.id?{background:catColor(i),color:"#fff",borderColor:catColor(i)}:{borderColor:catColor(i),color:catColor(i)}}
+          onClick={()=>setFilterCat(cat.id)}>{cat.name}</button>
+      ))}
+    </div>
+  );
+
+  const modePicker = (
+    <div className="lang-toggle" style={{marginBottom:10}}>
+      <button className={`lang-opt${quizMode==="mc"?" active":""}`} onClick={()=>setQuizMode("mc")}>Multiple Choice</button>
+      <button className={`lang-opt${quizMode==="speak"?" active":""}`} onClick={()=>setQuizMode("speak")}>🎤 Speak</button>
+    </div>
+  );
+
+  if (pool.length < 2) return (
+    <div className="page">
+      {categories.length>0 && catPills}
+      {modePicker}
+      <div className="empty-state">
+        <div className="empty-icon">📝</div>
+        <div className="empty-title">Need more cards</div>
+        <div className="empty-sub">At least 2 active cards needed to quiz.</div>
+      </div>
+    </div>
+  );
+  if (!questions) return null;
+
+  const getAnswer = c => studyLang==="es" ? c.english : c.spanish;
+  const handleNext = () => { if(qIdx+1>=questions.length){setDone(true);}else{setQIdx(i=>i+1);setChosen(null);} };
+
+  const scorebar = (
+    <div className="score-bar">
+      <div className="score-item"><div className="score-num correct">{sCorrect}</div><div className="score-label">Correct</div></div>
+      <div className="score-divider"/>
+      <div className="score-item"><div className="score-num wrong">{sWrong}</div><div className="score-label">Wrong</div></div>
+      <div className="score-divider"/>
+      <div className="score-item"><div className="score-num" style={{color:"var(--text2)"}}>{qIdx+1}/{questions.length}</div><div className="score-label">Question</div></div>
+    </div>
+  );
+
+  if (done) {
+    const total = sCorrect+sWrong;
+    const pct = total ? Math.round(sCorrect/total*100) : 0;
+    const emoji = pct>=80?"🏆":pct>=50?"👍":"💪";
+    return (
+      <div className="page">
+        {categories.length>0 && catPills}
+        {modePicker}
+        <div className="score-bar">
+          <div className="score-item"><div className="score-num correct">{sCorrect}</div><div className="score-label">Correct</div></div>
+          <div className="score-divider"/>
+          <div className="score-item"><div className="score-num wrong">{sWrong}</div><div className="score-label">Wrong</div></div>
+          <div className="score-divider"/>
+          <div className="score-item"><div className="score-num pct">{pct}%</div><div className="score-label">Score</div></div>
+        </div>
+        <div className="quiz-done" style={{marginTop:10}}>
+          <div className="quiz-done-emoji">{emoji}</div>
+          <div className="quiz-done-title">{pct>=80?"Great work!":pct>=50?"Keep going!":"Don't give up!"}</div>
+          <div className="quiz-done-sub">{total} questions · {questions.length} card{questions.length!==1?"s":""} in this set</div>
+          <button className="quiz-restart" onClick={()=>start(pool)}>Try Again</button>
+        </div>
+        <div className="section-header">All-time stats</div>
+        <div className="score-bar">
+          <div className="score-item"><div className="score-num correct">{quizStats.correct}</div><div className="score-label">Correct</div></div>
+          <div className="score-divider"/>
+          <div className="score-item"><div className="score-num wrong">{quizStats.wrong}</div><div className="score-label">Wrong</div></div>
+          <div className="score-divider"/>
+          <div className="score-item"><div className="score-num pct">{quizStats.correct+quizStats.wrong>0?Math.round(quizStats.correct/(quizStats.correct+quizStats.wrong)*100):0}%</div><div className="score-label">Overall</div></div>
+        </div>
+      </div>
+    );
+  }
+
+  const q = questions[qIdx];
+  const front = studyLang==="es" ? q.card.spanish : q.card.english;
+
+  return (
+    <div className="page">
+      {categories.length>0 && catPills}
+      {modePicker}
+      {scorebar}
+
+      {quizMode==="mc" ? (
+        <>
+          <div className="quiz-question">
+            <div className="quiz-prompt-label">{studyLang==="es"?"Spanish → English":"English → Spanish"}</div>
+            <div className="quiz-prompt-word">{front}</div>
+          </div>
+          <div className="quiz-choices">
+            {q.choices.map(choice => {
+              let cls = "quiz-choice";
+              if (chosen) { if (choice.id===q.card.id) cls+=" reveal-correct"; else if (choice.id===chosen) cls+=" wrong"; }
+              return (
+                <button key={choice.id} className={cls} disabled={!!chosen}
+                  onClick={()=>{
+                    if (chosen) return;
+                    const ok = choice.id===q.card.id;
+                    setChosen(choice.id);
+                    playSound(ok ? "correct" : "wrong");
+                    if (ok) setSCorrect(n=>n+1); else setSWrong(n=>n+1);
+                    onQuizResult(ok);
+                  }}>
+                  {getAnswer(choice)}
+                </button>
+              );
+            })}
+          </div>
+          {chosen && <button className="quiz-next" onClick={handleNext}>{qIdx+1>=questions.length?"See Results →":"Next →"}</button>}
+        </>
+      ) : (
+        <SpeakQuestion
+          key={qIdx}
+          question={q}
+          studyLang={studyLang}
+          onResult={ok=>{ playSound(ok ? "correct" : "wrong"); if(ok) setSCorrect(n=>n+1); else setSWrong(n=>n+1); onQuizResult(ok); }}
+          onNext={handleNext}
+          isLast={qIdx+1>=questions.length}
+        />
+      )}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// CARDS TAB
+// ════════════════════════════════════════
+function CardsTab({ cards, categories, onDelete, onEdit, onToggleMastered, onToggleCategory }) {
+  const [editId, setEditId] = useState(null);
+  const [editEs, setEditEs] = useState("");
+  const [editEn, setEditEn] = useState("");
+  const [expandCat, setExpandCat] = useState(null); // which card's cat picker is open
+
+  const alpha    = (a,b) => a.spanish.localeCompare(b.spanish, 'es', {sensitivity:'base'});
+  const active   = cards.filter(c=>!c.mastered).sort(alpha);
+  const mastered = cards.filter(c=>c.mastered).sort(alpha);
+
+  const saveEdit = () => { onEdit(editId,editEs,editEn); setEditId(null); };
+
+  const renderCard = (card, i) => (
+    <div key={card.id}>
+      {editId===card.id ? (
+        <div className="edit-inline">
+          <input value={editEs} onChange={e=>setEditEs(e.target.value)} placeholder="Spanish"/>
+          <input value={editEn} onChange={e=>setEditEn(e.target.value)} placeholder="English"/>
+          <div className="edit-actions">
+            <button className="edit-save" onClick={saveEdit}>Save</button>
+            <button className="edit-cancel" onClick={()=>setEditId(null)}>Cancel</button>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <div className="list-row">
+            <span className="row-num">{i+1}</span>
+            <div className="row-words">
+              <div className="row-es">{card.spanish}</div>
+              <div className="row-en">{card.english}</div>
+              {/* category chips */}
+              {categories.length>0 && (card.categories||[]).length>0 && (
+                <div style={{display:"flex",gap:4,flexWrap:"wrap",marginTop:4}}>
+                  {(card.categories||[]).map(cid=>{
+                    const cat=categories.find(c=>c.id===cid);
+                    const ci=categories.findIndex(c=>c.id===cid);
+                    return cat?<span key={cid} style={{background:catColor(ci)+"22",color:catColor(ci),borderRadius:8,padding:"1px 7px",fontSize:11,fontWeight:600}}>{cat.name}</span>:null;
+                  })}
+                </div>
+              )}
+            </div>
+            {card.mastered && <span className="row-badge">✓</span>}
+            <div className="row-actions">
+              {categories.length>0 && (
+                <button className="row-btn" style={{color:"var(--blue)"}} title="Categories"
+                  onClick={()=>setExpandCat(expandCat===card.id?null:card.id)}>🏷</button>
+              )}
+              <button className="row-btn" onClick={()=>onToggleMastered(card.id)} title="Mastered">{card.mastered?"↩":"✓"}</button>
+              <button className="row-btn edit" onClick={()=>{setEditId(card.id);setEditEs(card.spanish);setEditEn(card.english);}}>✎</button>
+              <button className="row-btn danger" onClick={()=>onDelete(card.id)}>✕</button>
+            </div>
+          </div>
+          {/* category picker */}
+          {expandCat===card.id && categories.length>0 && (
+            <div style={{padding:"8px 16px 12px 52px",display:"flex",gap:8,flexWrap:"wrap",background:"var(--bg)",borderBottom:"1px solid var(--sep)"}}>
+              {categories.map((cat,ci)=>{
+                const on=(card.categories||[]).includes(cat.id);
+                return (
+                  <button key={cat.id}
+                    style={{background:on?catColor(ci):"transparent",color:on?"#fff":catColor(ci),border:`1.5px solid ${catColor(ci)}`,borderRadius:16,padding:"4px 12px",fontSize:13,fontWeight:600,cursor:"pointer"}}
+                    onClick={()=>onToggleCategory(card.id,cat.id)}>
+                    {on?"✓ ":""}{cat.name}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="page">
+      <div className="section-header">Active ({active.length})</div>
+      {active.length ? <div className="list-group">{active.map((c,i)=>renderCard(c,i))}</div>
+        : <div style={{color:"var(--text4)",fontSize:14,padding:"8px 0"}}>No active cards.</div>}
+      {mastered.length>0 && <>
+        <div className="section-header">Mastered ({mastered.length})</div>
+        <div className="list-group">{mastered.map((c,i)=>renderCard(c,i))}</div>
+      </>}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// CATEGORIES TAB
+// ════════════════════════════════════════
+function CategoriesTab({ categories, cards, onAddCategory, onDeleteCategory, onRenameCategory }) {
+  const [name, setName] = useState("");
+  const [renameId, setRenameId] = useState(null);
+  const [renameVal, setRenameVal] = useState("");
+
+  const submit = () => {
+    if (!name.trim()) return;
+    onAddCategory(name.trim());
+    setName("");
+  };
+
+  return (
+    <div className="page">
+      <div className="section-header">New Category</div>
+      <div className="add-group">
+        <div className="add-field">
+          <span className="add-label" style={{color:"var(--blue)"}}>Name</span>
+          <input className="add-input" value={name} onChange={e=>setName(e.target.value)}
+            placeholder='e.g. Verbs, Tough ones…' onKeyDown={e=>e.key==="Enter"&&submit()} autoFocus/>
+        </div>
+      </div>
+      <button className="add-btn" onClick={submit} disabled={!name.trim()}>Create Category</button>
+
+      {categories.length>0 && <>
+        <div className="section-header" style={{marginTop:24}}>Your Categories</div>
+        <div className="list-group">
+          {categories.map((cat,i)=>{
+            const count = cards.filter(c=>(c.categories||[]).includes(cat.id)).length;
+            return (
+              <div key={cat.id}>
+                {renameId===cat.id ? (
+                  <div className="edit-inline">
+                    <input value={renameVal} onChange={e=>setRenameVal(e.target.value)} placeholder="Category name"/>
+                    <div className="edit-actions">
+                      <button className="edit-save" onClick={()=>{onRenameCategory(cat.id,renameVal);setRenameId(null);}}>Save</button>
+                      <button className="edit-cancel" onClick={()=>setRenameId(null)}>Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="list-row">
+                    <div style={{width:12,height:12,borderRadius:"50%",background:catColor(i),flexShrink:0}}></div>
+                    <div className="row-words" style={{flex:1}}>
+                      <div className="row-es" style={{color:catColor(i)}}>{cat.name}</div>
+                      <div className="row-en">{count} word{count!==1?"s":""}</div>
+                    </div>
+                    <div className="row-actions">
+                      <button className="row-btn edit" onClick={()=>{setRenameId(cat.id);setRenameVal(cat.name);}}>✎</button>
+                      <button className="row-btn danger" onClick={()=>onDeleteCategory(cat.id)}>✕</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div style={{color:"var(--text4)",fontSize:13,marginTop:12,lineHeight:1.5}}>
+          Tip: Assign words to categories from the Cards tab using the 🏷 button.
+        </div>
+      </>}
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// ADD TAB
+// ════════════════════════════════════════
+function AddTab({ onAdd, categories }) {
+  const [es, setEs] = useState("");
+  const [en, setEn] = useState("");
+  const [selCats, setSelCats] = useState([]);
+  const [translating, setTranslating] = useState(false);
+  const [autoFilled, setAutoFilled] = useState(false);
+  const debounceRef = useRef(null);
+
+  const toggleCat = id => setSelCats(s => s.includes(id) ? s.filter(x=>x!==id) : [...s,id]);
+
+  const submit = () => {
+    if (!es.trim()||!en.trim()) return;
+    onAdd(es.trim(), en.trim(), selCats);
+    setEs(""); setEn(""); setSelCats([]); setAutoFilled(false);
+  };
+
+  // Auto-translate Spanish → English after user pauses typing
+  const handleEsChange = (val) => {
+    setEs(val);
+    setAutoFilled(false);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!val.trim()) { setEn(""); return; }
+    debounceRef.current = setTimeout(async () => {
+      setTranslating(true);
+      try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(val.trim())}&langpair=es|en`);
+        const data = await res.json();
+        if (data.responseStatus === 200) {
+          const translated = data.responseData.translatedText;
+          // MyMemory returns ALL CAPS on some errors — ignore those
+          if (translated && translated !== translated.toUpperCase()) {
+            setEn(translated);
+            setAutoFilled(true);
+          }
+        }
+      } catch {}
+      setTranslating(false);
+    }, 600);
+  };
+
+  return (
+    <div className="page">
+      <div className="section-header">New Flashcard</div>
+      <div className="add-group">
+        <div className="add-field">
+          <span className="add-label">Spanish</span>
+          <input className="add-input" value={es}
+            onChange={e => handleEsChange(e.target.value)}
+            placeholder="e.g. la manzana"
+            onKeyDown={e=>e.key==="Enter"&&submit()}
+            autoFocus/>
+        </div>
+        <div className="add-field" style={{position:"relative"}}>
+          <span className="add-label" style={{display:"flex",alignItems:"center",gap:6}}>
+            English
+            {translating && <span className="translate-spinner">⟳</span>}
+            {autoFilled && !translating && <span style={{fontSize:11,color:"var(--green)",fontWeight:600,letterSpacing:0.3}}>auto-filled</span>}
+          </span>
+          <input className="add-input" value={en}
+            onChange={e=>{setEn(e.target.value);setAutoFilled(false);}}
+            placeholder="translation will appear here"
+            onKeyDown={e=>e.key==="Enter"&&submit()}/>
+        </div>
+      </div>
+      {categories.length>0 && (
+        <>
+          <div className="section-header" style={{marginTop:16}}>Add to Category (optional)</div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+            {categories.map((cat,i)=>{
+              const on=selCats.includes(cat.id);
+              return (
+                <button key={cat.id}
+                  style={{background:on?catColor(i):"transparent",color:on?"#fff":catColor(i),border:`1.5px solid ${catColor(i)}`,borderRadius:16,padding:"6px 14px",fontSize:14,fontWeight:600,cursor:"pointer"}}
+                  onClick={()=>toggleCat(cat.id)}>
+                  {on?"✓ ":""}{cat.name}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+      <button className="add-btn" onClick={submit} disabled={!es.trim()||!en.trim()}>Add Card</button>
+      <div style={{color:"var(--text4)",fontSize:12,marginTop:10,textAlign:"center"}}>Translation auto-filled · edit freely before saving</div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// BACKUP TAB
+// ════════════════════════════════════════
+function BackupTab({ cards, categories, quizStats, onImport, showToast }) {
+  const fileRef = useRef(null);
+
+  const doExport = () => {
+    const data = { version:3, exportedAt:new Date().toISOString(), cards, categories, quizStats };
+    const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href=url; a.download=`vocabulario-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click(); URL.revokeObjectURL(url);
+    showToast("✅ Backup downloaded");
+  };
+
+  const doImport = e => {
+    const file=e.target.files[0]; if(!file) return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try {
+        const data=JSON.parse(ev.target.result);
+        const imported=(data.cards||[]).map(c=>({
+          id:c.id||Date.now()+Math.random(), spanish:c.spanish||"", english:c.english||"",
+          mastered:!!c.mastered, categories:c.categories||[]
+        })).filter(c=>c.spanish&&c.english);
+        if(!imported.length){showToast("⚠️ No valid cards found");return;}
+        onImport(imported, data.categories||[], data.quizStats||null);
+        showToast(`✅ Imported ${imported.length} cards`);
+      } catch { showToast("❌ Invalid backup file"); }
+    };
+    reader.readAsText(file); e.target.value="";
+  };
+
+  return (
+    <div className="page">
+      <div className="section-header">Backup & Restore</div>
+      <div className="backup-group">
+        <div className="backup-row">
+          <div className="backup-icon export">📤</div>
+          <div className="backup-info"><div className="backup-title">Export Cards</div><div className="backup-sub">Download all {cards.length} cards as a JSON file</div></div>
+          <button className="backup-btn" onClick={doExport}>Export</button>
+        </div>
+        <div className="backup-row">
+          <div className="backup-icon import">📥</div>
+          <div className="backup-info"><div className="backup-title">Import Cards</div><div className="backup-sub">Restore from a previously exported backup</div></div>
+          <button className="backup-btn" onClick={()=>fileRef.current.click()}>Import</button>
+          <input ref={fileRef} type="file" accept=".json,application/json" style={{display:"none"}} onChange={doImport}/>
+        </div>
+      </div>
+      <div className="section-header" style={{marginTop:24}}>Tips</div>
+      <div className="backup-group">
+        {[["💡","Export regularly","Save a backup before clearing Safari data or switching devices."],
+          ["📱","Moving phones?","Export on your old phone, import on the new one."],
+          ["☁️","Staying safe","Store your backup in iCloud Drive or email it to yourself."]
+        ].map(([icon,title,sub])=>(
+          <div key={title} className="backup-row">
+            <div style={{fontSize:22,flexShrink:0}}>{icon}</div>
+            <div className="backup-info"><div className="backup-title">{title}</div><div className="backup-sub">{sub}</div></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ════════════════════════════════════════
+// ROOT APP
+// ════════════════════════════════════════
+function App() {
+  const [state, setState] = useState(load);
+  const [tab, setTab]     = useState("study");
+  const [studyLang, setStudyLang] = useState("es");
+  const [showBanner, setShowBanner] = useState(false);
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+
+  const showToast = msg => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    setToast(msg);
+    toastTimer.current = setTimeout(()=>setToast(null), 2600);
+  };
+
+  useEffect(()=>{ save(state); }, [state]);
+  useEffect(()=>{
+    const standalone=window.navigator.standalone||window.matchMedia('(display-mode: standalone)').matches;
+    if(!standalone&&!sessionStorage.getItem("banner-dismissed")){
+      const t=setTimeout(()=>setShowBanner(true),3500); return()=>clearTimeout(t);
+    }
+  },[]);
+
+  const toggleMastered   = id => setState(s=>({...s,cards:s.cards.map(c=>c.id===id?{...c,mastered:!c.mastered}:c)}));
+  const deleteCard       = id => setState(s=>({...s,cards:s.cards.filter(c=>c.id!==id)}));
+  const editCard         = (id,es,en) => setState(s=>({...s,cards:s.cards.map(c=>c.id===id?{...c,spanish:es,english:en}:c)}));
+  const addCard          = (es,en,cats) => { setState(s=>({...s,cards:[...s.cards,{id:Date.now(),spanish:es,english:en,mastered:false,categories:cats||[]}]})); setTab("study"); };
+  const toggleCategory   = (cardId,catId) => setState(s=>({...s,cards:s.cards.map(c=>c.id===cardId?{...c,categories:(c.categories||[]).includes(catId)?(c.categories||[]).filter(x=>x!==catId):[...(c.categories||[]),catId]}:c)}));
+  const addCategory      = name => setState(s=>({...s,categories:[...(s.categories||[]),{id:Date.now()+"",name}]}));
+  const deleteCategory   = id => setState(s=>({...s,categories:(s.categories||[]).filter(c=>c.id!==id),cards:s.cards.map(c=>({...c,categories:(c.categories||[]).filter(x=>x!==id)}))}));
+  const renameCategory   = (id,name) => setState(s=>({...s,categories:(s.categories||[]).map(c=>c.id===id?{...c,name}:c)}));
+  const onQuizResult     = ok => setState(s=>({...s,quiz:{...s.quiz,correct:s.quiz.correct+(ok?1:0),wrong:s.quiz.wrong+(ok?0:1)}}));
+  const importCards      = (cards,categories,quiz) => { setState(s=>({cards,categories:categories||[],quiz:quiz||s.quiz})); setTab("study"); };
+
+  const tabs = [
+    {id:"study",   icon:"🗂", label:"Study"},
+    {id:"quiz",    icon:"🧠", label:"Quiz"},
+    {id:"cards",   icon:"≡",  label:"Cards"},
+    {id:"cats",    icon:"🏷", label:"Lists"},
+    {id:"add",     icon:"+",  label:"Add"},
+    {id:"backup",  icon:"☁️", label:"Backup"},
+  ];
+
+  const cats = state.categories||[];
+
+  return (
+    <div id="root">
+      <div className="topnav">
+        <span className="topnav-title">Vocabulario</span>
+        <div className="topnav-right">
+          {(tab==="study"||tab==="quiz") && (
+            <div className="lang-toggle">
+              <button className={`lang-opt${studyLang==="es"?" active":""}`} onClick={()=>setStudyLang("es")}>ES→EN</button>
+              <button className={`lang-opt${studyLang==="en"?" active":""}`} onClick={()=>setStudyLang("en")}>EN→ES</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {tab==="study"  && <StudyTab      cards={state.cards} categories={cats} onToggleMastered={toggleMastered} studyLang={studyLang}/>}
+      {tab==="quiz"   && <QuizTab       cards={state.cards} categories={cats} quizStats={state.quiz} onQuizResult={onQuizResult} studyLang={studyLang} key={tab}/>}
+      {tab==="cards"  && <CardsTab      cards={state.cards} categories={cats} onDelete={deleteCard} onEdit={editCard} onToggleMastered={toggleMastered} onToggleCategory={toggleCategory}/>}
+      {tab==="cats"   && <CategoriesTab categories={cats} cards={state.cards} onAddCategory={addCategory} onDeleteCategory={deleteCategory} onRenameCategory={renameCategory}/>}
+      {tab==="add"    && <AddTab        onAdd={addCard} categories={cats}/>}
+      {tab==="backup" && <BackupTab     cards={state.cards} categories={cats} quizStats={state.quiz} onImport={importCards} showToast={showToast}/>}
+
+      {toast && <div className="toast">{toast}</div>}
+
+      <div className="tabbar">
+        {tabs.map(t=>(
+          <button key={t.id} className={`tab${tab===t.id?" active":""}`} onClick={()=>setTab(t.id)}>
+            <span className="tab-icon">{t.icon}</span>{t.label}
+          </button>
+        ))}
+      </div>
+
+      {showBanner && (
+        <div className="install-banner">
+          <div className="banner-text">📲 <strong>Add to Home Screen</strong><br/>Tap <strong>Share</strong> in Safari → <strong>"Add to Home Screen"</strong></div>
+          <button className="banner-close" onClick={()=>{setShowBanner(false);sessionStorage.setItem("banner-dismissed","1");}}>✕</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+
+<script>
+// Note: Service worker registration via blob: URL is not supported by browsers
+// (requires http/https script URL), so offline support is skipped here.
+// The manifest below still enables "Add to Home Screen" installation.
+
+// Manifest (safe — wrapped so failures never block the app)
+try {
+  const m = {
+    name: "Vocabulario",
+    short_name: "Vocabulario",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#f2f2f7",
+    theme_color: "#f2f2f7",
+    icons: [{
+      src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%23f2f2f7'/%3E%3Ctext x='96' y='128' font-size='100' text-anchor='middle' fill='%230066cc' font-family='-apple-system,sans-serif' font-weight='700'%3EV%3C/text%3E%3C/svg%3E",
+      sizes: "192x192",
+      type: "image/svg+xml"
+    }]
+  };
+  const ml = document.createElement('link');
+  ml.rel = 'manifest';
+  ml.href = URL.createObjectURL(new Blob([JSON.stringify(m)], { type: 'application/manifest+json' }));
+  document.head.appendChild(ml);
+} catch (e) {
+  console.warn('Manifest setup skipped:', e);
+}
+</script>
+</body>
+</html>
